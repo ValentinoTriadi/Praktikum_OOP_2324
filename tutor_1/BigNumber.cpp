@@ -19,6 +19,15 @@ BigNumber::BigNumber(int number) {
 BigNumber::BigNumber(string aVeryBigNumber) {
   this->digit = new int[BigNumber::max_digit];
   int strSize = aVeryBigNumber.size();
+  for (int i = 0; i < strSize; i++) {
+    this->digit[i] = aVeryBigNumber[strSize - 1 - i] - '0';
+  }
+}
+// Fix the constructor above so that it can handle the case when the string is shorter than max_digit
+/*
+BigNumber::BigNumber(string aVeryBigNumber) {
+  this->digit = new int[BigNumber::max_digit];
+  int strSize = aVeryBigNumber.size();
   for (int i = 0; i < BigNumber::max_digit ; i++) {
     if (i >= strSize) {
         this->digit[i] = 0;
@@ -26,7 +35,8 @@ BigNumber::BigNumber(string aVeryBigNumber) {
         this->digit[i] = aVeryBigNumber[strSize - 1 - i] - '0';
     }
   }
-}
+} 
+*/
 
 BigNumber::BigNumber(const BigNumber& bn) {
   this->digit = new int[BigNumber::max_digit];
