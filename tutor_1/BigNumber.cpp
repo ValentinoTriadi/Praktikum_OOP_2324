@@ -99,11 +99,12 @@ BigNumber BigNumber::operator+(const BigNumber& other) {
   // - c[i] = other[i] 
   int carrier = 0;
   for (int i = 0; i < BigNumber::getMaxDigit(); i++) {
-    if (this->digit[i] + other[i] + carrier >= 10) {
-      c[i] = (this->digit[i] + other[i] + carrier) % 10;
+    int temp = this->digit[i] + other[i] + carrier;
+    if (temp >= 10) {
+      c[i] = (temp) % 10;
       carrier = 1;
     } else {
-      c[i] = this->digit[i] + other[i] + carrier;
+      c[i] = temp;
       carrier = 0;
     }
   }
