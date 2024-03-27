@@ -8,6 +8,10 @@ void Restaurant::Push(int val){
     order.push(val);
 }
 void Restaurant::Pop(int val){
+    if (val > order.size()){
+        cout << "Proses tidak valid" << endl;
+        return;
+    }
     for (int i = 0; i < val; i++){
         order.pop();
     }
@@ -65,4 +69,5 @@ ostream& operator<<(ostream& os,Restaurant r){
         }
         r.Pop(1);
     }
+    return os << ")" << endl;
 }
