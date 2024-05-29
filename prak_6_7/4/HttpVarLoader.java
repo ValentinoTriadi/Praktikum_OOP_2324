@@ -48,60 +48,95 @@ public class HttpVarLoader {
       throw new NullPointerException();
     }
 
+    // Ambil semua field dari objek
     Field[] fields = obj.getClass().getDeclaredFields();
     for (Field field : fields) {
+
+      // Jika field memiliki annotation HttpVar
       if (field.isAnnotationPresent(HttpVar.class)) {
         HttpVar annotation = field.getAnnotation(HttpVar.class);
+        
+        // Ambil key dari annotation
         String key = annotation.name();
-        String value = null;
-        if (annotation.type().equals(HttpVar.Type.Header)) {
-          value = headers.get(key);
-        } else if (annotation.type().equals(HttpVar.Type.Body)) {
-          value = body.get(key);
-        } else if (annotation.type().equals(HttpVar.Type.Query)) {
-          value = query.get(key);
-        } else if (annotation.type().equals(HttpVar.Type.Cookie)) {
-          value = cookie.get(key);
-        }
-        if (value == null) {
+
+        // Ambil type dari annotation
+        HttpVar.Type type = annotation.type();
+
+        // Jika key bernilai null atau key tidak ada pada daftar variabel HTTP
+        if (key == null || !isVariableExist(key, type)) {
           throw new NullPointerException();
         }
+        
+        // Ambil value dari key sesuai dengan type
+        String value = getValue(key, type);
+
+        // Set field dengan value
         try {
           field.setAccessible(true);
           field.set(obj, value);
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
         }
       }
     }
 
+    // Ambil semua method dari objek
     Method[] methods = obj.getClass().getDeclaredMethods();
     for (Method method : methods) {
+      // Jika method memiliki annotation HttpVar
       if (method.isAnnotationPresent(HttpVar.class)) {
         HttpVar annotation = method.getAnnotation(HttpVar.class);
+
+        // Ambil key dari annotation
         String key = annotation.name();
-        String value = null;
-        if (annotation.type().equals(HttpVar.Type.Header)) {
-          value = headers.get(key);
-        } else if (annotation.type().equals(HttpVar.Type.Body)) {
-          value = body.get(key);
-        } else if (annotation.type().equals(HttpVar.Type.Query)) {
-          value = query.get(key);
-        } else if (annotation.type().equals(HttpVar.Type.Cookie)) {
-          value = cookie.get(key);
-        }
-        if (value == null) {
+
+        // Ambil type dari annotation
+        HttpVar.Type type = annotation.type();
+
+        // Jika key bernilai null atau key tidak ada pada daftar variabel HTTP
+        if (key == null || !isVariableExist(key, type)) {
           throw new NullPointerException();
         }
+
+        // Ambil value dari key sesuai dengan type
+        String value = getValue(key, type);
+
+        // Panggil method dengan value sebagai parameter
         try {
           method.setAccessible(true);
-          method.invoke(obj, value);
-        } catch (InvocationTargetException e) {
-          throw e;
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
+          method.invoke(obj, (value));
+        // } catch (InvocationTargetException e) {
+        //   throw new InvocationTargetException(e);
+        } catch (Exception e) {
+          throw new RuntimeException(e);
         }
       }
     }
+  }
+
+  private String getValue(String key, HttpVar.Type type) {
+    if (type.equals(HttpVar.Type.Header)) {
+      return headers.get(key);
+    } else if (type.equals(HttpVar.Type.Body)) {
+      return body.get(key);
+    } else if (type.equals(HttpVar.Type.Query)) {
+      return query.get(key);
+    } else if (type.equals(HttpVar.Type.Cookie)) {
+      return cookie.get(key);
+    }
+    return null;
+  }
+
+  private boolean isVariableExist(String key, HttpVar.Type type) {
+    if (type.equals(HttpVar.Type.Header)) {
+      return headers.containsKey(key);
+    } else if (type.equals(HttpVar.Type.Body)) {
+      return body.containsKey(key);
+    } else if (type.equals(HttpVar.Type.Query)) {
+      return query.containsKey(key);
+    } else if (type.equals(HttpVar.Type.Cookie)) {
+      return cookie.containsKey(key);
+    }
+    return false;
   }
 }

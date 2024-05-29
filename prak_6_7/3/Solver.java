@@ -26,19 +26,12 @@ public class Solver {
     for (String prompt : prompts) {
       Scraper scraper = new Scraper(prompt);
       scrapers.add(scraper);
-    }
-
-    for (Scraper scraper : scrapers) {
       scraper.start();
     }
 
     for (Scraper scraper : scrapers) {
-      try {
-        scraper.join();
-        answers.put(scraper.prompt, scraper.getAnswer());
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
+      String res = scraper.getAnswer();
+      answers.put(scraper.prompt, res);
     }
 
     String answer = "";

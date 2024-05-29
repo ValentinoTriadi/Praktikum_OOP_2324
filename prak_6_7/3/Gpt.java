@@ -11,7 +11,7 @@ public class Gpt {
       // Melakukan request akan membutuhkan waktu lama, jadi asumsikan
       // kode berikut sebagai contoh.
       try {
-        Thread.sleep((int) (Math.random() * 5000));
+        Thread.sleep((int) (5000));
       } catch (InterruptedException e) {
         //
       }
